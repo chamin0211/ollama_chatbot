@@ -12,11 +12,17 @@ function App() {
   const [topP, setTopP] = useState(0.7)
   const [numPredict, setNumPredict] = useState(256)
   const [modelOptions, setModelOptions] = useState([])
+  const [isModelLoading, setIsModelLoading] = useState(true)
+  const [modelError, setModelError] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     let ignore = false
 
     async function loadModels() {
+      setIsModelLoading(true)
+      setModelError(null)
       try {
         const models = await fetchModels()
         if (!ignore) {
@@ -24,7 +30,11 @@ function App() {
         }
       } catch (error) {
         if (!ignore) {
-          console.error(error)
+          setModelError(error.message)
+        }
+      } finally {
+        if (!ignore) {
+          setIsModelLoading(false)
         }
       }
     }
@@ -37,6 +47,8 @@ function App() {
 
   async function handleSendMessage(content) {
     setMessages((prev) => [...prev, { role: "user", content }])
+    setIsLoading(true)
+    setError(null)
 
     try {
       const response = await sendChatMessage({
@@ -48,8 +60,10 @@ function App() {
         numPredict,
       })
       setMessages((prev) => [...prev, { role: "assistant", content: response.message }])
-    } catch (error) {
-      console.error(error)
+    } catch (sendError) {
+      setError(sendError.message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -62,6 +76,8 @@ function App() {
         topP={topP}
         numPredict={numPredict}
         modelOptions={modelOptions}
+        isModelLoading={isModelLoading}
+        modelError={modelError}
         onModelChange={setModel}
         onSystemPromptChange={setSystemPrompt}
         onTemperatureChange={setTemperature}
@@ -72,7 +88,8 @@ function App() {
         messages={messages}
         onSendMessage={handleSendMessage}
         onReset={() => setMessages([])}
-        isLoading={false}
+        isLoading={isLoading}
+        error={error}
       />
     </div>
   )

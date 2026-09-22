@@ -5,6 +5,8 @@ function SettingsPanel({
   topP,
   numPredict,
   modelOptions,
+  isModelLoading,
+  modelError,
   onModelChange,
   onSystemPromptChange,
   onTemperatureChange,
@@ -21,6 +23,7 @@ function SettingsPanel({
           id="model-select"
           value={model}
           onChange={(event) => onModelChange(event.target.value)}
+          disabled={isModelLoading}
         >
           {modelOptions.map((option) => (
             <option key={option} value={option}>
@@ -28,6 +31,8 @@ function SettingsPanel({
             </option>
           ))}
         </select>
+        {isModelLoading && <p className="settings-panel__status">불러오는 중...</p>}
+        {modelError && <p className="settings-panel__status settings-panel__status--error">{modelError}</p>}
       </div>
 
       <div className="settings-panel__field">

@@ -1,3 +1,158 @@
+.app {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  text-align: left;
+}
+
+.app > .settings-panel {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+
+.app > .chat-window {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--color-bg);
+}
+
+/* SettingsPanel */
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.2rem;
+}
+
+.settings-panel__title {
+  font-size: 1.1rem;
+}
+
+.settings-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.settings-panel__field label {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.settings-panel__field select,
+.settings-panel__field textarea,
+.settings-panel__field input[type="number"] {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+.settings-panel__field select:disabled {
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.settings-panel__field textarea {
+  resize: vertical;
+  min-height: 4rem;
+}
+
+.settings-panel__field input[type="range"] {
+  accent-color: var(--color-primary);
+}
+
+.settings-panel__status {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.settings-panel__status--error {
+  color: var(--color-error-text);
+}
+
+/* ChatWindow */
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  height: 100%;
+  padding: 1.2rem;
+  box-sizing: border-box;
+}
+
+.chat-window__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem;
+  background-color: var(--color-surface);
+  border-radius: 0.9rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.chat-window__title {
+  font-size: 1.5rem;
+}
+
+.chat-window__subtitle {
+  margin-top: 0.3rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.chat-window__reset-button {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chat-window__reset-button:hover {
+  background-color: var(--color-bg);
+}
+
+.chat-window__error {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--color-error-border);
+  border-radius: 0.6rem;
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  font-size: 0.9rem;
+}
+
+/* MessageList / MessageBubble */
+
+.message-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  overflow-y: auto;
+}
+
+.message-list--empty {
+  align-items: center;
+  justify-content: center;
+}
+
+.message-list__empty-text {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
 .message-row {
   display: flex;
   width: 100%;
@@ -21,16 +176,18 @@
 }
 
 .message-bubble--user {
-  background-color: #3b82f6;
-  color: #ffffff;
+  background-color: var(--color-user-bubble-bg);
+  color: var(--color-user-bubble-text);
   border-bottom-right-radius: 0.2rem;
 }
 
 .message-bubble--assistant {
-  background-color: #e5e7eb;
-  color: #1f2937;
+  background-color: var(--color-assistant-bubble-bg);
+  color: var(--color-assistant-bubble-text);
   border-bottom-left-radius: 0.2rem;
 }
+
+/* ChatInput */
 
 .chat-input {
   display: flex;
@@ -40,131 +197,32 @@
 .chat-input__field {
   flex: 1;
   padding: 0.6rem 0.9rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border);
   border-radius: 0.6rem;
   font-size: 1rem;
+  color: var(--color-text);
+  background-color: var(--color-surface);
 }
 
 .chat-input__field:disabled {
-  background-color: #f3f4f6;
+  background-color: var(--color-bg);
 }
 
 .chat-input__button {
   padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 0.6rem;
-  background-color: #3b82f6;
+  background-color: var(--color-primary);
   color: #ffffff;
   font-size: 1rem;
   cursor: pointer;
 }
 
+.chat-input__button:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
 .chat-input__button:disabled {
-  background-color: #9ca3af;
+  background-color: var(--color-disabled-bg);
   cursor: not-allowed;
-}
-
-.settings-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  padding: 1.2rem;
-}
-
-.settings-panel__title {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.settings-panel__field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.settings-panel__field label {
-  font-size: 0.9rem;
-  color: #374151;
-}
-
-.settings-panel__field select,
-.settings-panel__field textarea,
-.settings-panel__field input[type="number"] {
-  padding: 0.5rem 0.7rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
-  font-family: inherit;
-}
-
-.settings-panel__field textarea {
-  resize: vertical;
-  min-height: 4rem;
-}
-
-.chat-window {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  height: 100%;
-  padding: 1.2rem;
-  box-sizing: border-box;
-}
-
-.chat-window__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.2rem;
-  background-color: #ffffff;
-  border-radius: 0.9rem;
-}
-
-.chat-window__title {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.chat-window__subtitle {
-  margin: 0.3rem 0 0;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-.chat-window__reset-button {
-  padding: 0.6rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  background-color: #ffffff;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.message-list {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  overflow-y: auto;
-}
-
-.app {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  text-align: left;
-}
-
-.app > .settings-panel {
-  width: 280px;
-  flex-shrink: 0;
-  border-right: 1px solid #e5e7eb;
-  overflow-y: auto;
-}
-
-.app > .chat-window {
-  flex: 1;
-  min-width: 0;
-  background-color: #f4f5f7;
 }

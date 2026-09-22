@@ -35,9 +35,9 @@
   - [x] 4.3 ChatInput 전송 시 사용자 메시지를 `messages`에 추가하고 `sendChatMessage` 호출 → 응답 도착 시 AI 메시지 추가 (수정 파일: App.jsx, ChatInput.jsx)
   - [x] 4.4 ChatWindow의 "대화 초기화" 버튼 클릭 시 확인 모달 없이 즉시 `messages`를 빈 배열로 초기화하는 로직 연결 (수정 파일: App.jsx, ChatWindow.jsx)
 
-- [ ] 5.0 예외 처리 마무리 및 스타일 정리
-  - [ ] 5.1 모델 목록 로딩/실패 상태 처리 — 로딩 중 드롭다운 비활성화, 실패 시 재시도 버튼 없이 에러 문구만 표시 (수정 파일: App.jsx, SettingsPanel.jsx)
-  - [ ] 5.2 메시지 전송 로딩 상태 처리 — 응답 대기 중 ChatInput 전송 버튼을 "응답 생성 중..."으로 표시하고 비활성화 (수정 파일: App.jsx, ChatInput.jsx)
-  - [ ] 5.3 `/chat` 실패 시 에러 메시지 표시 처리 — chatApi.js가 변환한 메시지(422/500 공통)를 동일한 방식으로 채팅 영역에 표시 (수정 파일: App.jsx, ChatWindow.jsx)
-  - [ ] 5.4 대화가 없을 때 "메시지를 입력해 대화를 시작하세요" 빈 상태 안내 문구 표시 (수정 파일: MessageList.jsx)
-  - [ ] 5.5 App.css/index.css 전체 스타일을 설계도 기준으로 정리 (수정 파일: App.css, index.css)
+- [x] 5.0 예외 처리 마무리 및 스타일 정리
+  - [x] 5.1 모델 목록 로딩/실패 상태 처리 — 로딩 중 드롭다운 비활성화, 실패 시 재시도 버튼 없이 에러 문구만 표시 (수정 파일: App.jsx, SettingsPanel.jsx)
+  - [x] 5.2 메시지 전송 로딩 상태 처리 — 응답 대기 중 ChatInput 전송 버튼을 "응답 생성 중..."으로 표시하고 비활성화 (수정 파일: App.jsx, ChatInput.jsx)
+  - [x] 5.3 `/chat` 실패 시 에러 메시지 표시 처리 — chatApi.js가 변환한 메시지(422/500 공통)를 동일한 방식으로 채팅 영역에 표시 (수정 파일: App.jsx, ChatWindow.jsx)
+  - [x] 5.4 대화가 없을 때 "메시지를 입력해 대화를 시작하세요" 빈 상태 안내 문구 표시 (수정 파일: MessageList.jsx)
+  - [x] 5.5 App.css/index.css 전체 스타일을 설계도 기준으로 정리 (수정 파일: App.css, index.css)

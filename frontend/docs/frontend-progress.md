@@ -88,3 +88,55 @@
 - 한 일: `App.jsx`에 `handleSendMessage(content)`를 추가해 사용자 메시지를 즉시 `messages`에 추가하고, 현재 `model`/`systemPrompt`/`temperature`/`topP`/`numPredict` 값으로 `chatApi.sendChatMessage`를 호출한 뒤 응답의 `message`를 AI 메시지로 `messages`에 추가하도록 구현했다. `ChatWindow`의 `onSendMessage`에 이 함수를 연결했다. `ChatInput.jsx`는 3.3에서 이미 `onSend(trimmed)`를 호출하도록 구현돼 있어 추가 수정이 필요 없었다. `npm run lint`, `npm run build` 통과를 확인했고, 4.1~4.4가 모두 끝나 상위 작업 4.0도 체크했다.
 - 확인 방법: 백엔드를 8000번 포트에서 실행한 뒤 `npm run dev`로 프론트를 띄우고 입력창에 메시지를 보내면, 사용자 메시지가 오른쪽 파란 말풍선으로 먼저 추가되고 잠시 뒤 왼쪽 회색 말풍선으로 AI 응답이 추가되는지 확인한다.
 - 결정/이슈: 요청 중복 방지/로딩 표시(`isLoading`)는 5.2에서, 실패 시 에러 메시지 표시는 5.3에서 다루기로 하고 이번 작업에서는 `catch` 블록에 `console.error`만 남겨 두었다. `/chat` 요청은 PRD 9.8 요구사항대로 대화 히스토리 없이 최신 사용자 메시지(`content`)만 전송한다. 이슈 없음.
+
+## [5.1] 모델 목록 로딩/실패 상태 처리
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/App.jsx, frontend/src/components/SettingsPanel.jsx
+- 한 일: App.jsx에 `isModelLoading`(초기값 true), `modelError` 상태를 추가하고, `fetchModels` 호출 전/후로 각각 로딩 시작/종료와 실패 시 `error.message` 저장을 처리했다(성공 시 `modelError`를 null로 유지). `SettingsPanel`은 이 두 값을 props로 받아 로딩 중에는 모델 드롭다운을 `disabled`로 비활성화하고 "불러오는 중..." 문구를, 실패 시에는 재시도 버튼 없이 에러 문구만 표시하도록 구현했다. `npm run lint`, `npm run build` 통과를 확인했다.
+- 확인 방법: 백엔드를 끈 상태로 `npm run dev`를 실행하면 모델 드롭다운이 비활성화되고 에러 문구가 뜨는지, 백엔드를 켠 상태에서는 잠깐 "불러오는 중..." 표시 후 정상적으로 모델 목록이 채워지는지 확인한다.
+- 결정/이슈: PRD 5절 컴포넌트 명세에는 `isModelLoading`/`modelError` props가 명시돼 있지 않았지만, PRD 10절 예외 처리 표와 task.md 5.1 항목에 이 동작이 명시적으로 요구되어 있어 구현에 필요한 최소한의 props로 추가했다. 새 className(`settings-panel__status`, `settings-panel__status--error`)은 이번 작업 범위(App.css 미포함)에 스타일을 추가하지 않고 5.5에서 정리하기로 함(3.2와 동일한 방식). 이슈 없음.
+
+## [5.2] 메시지 전송 로딩 상태 처리
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/App.jsx
+- 한 일: App.jsx에 `isLoading` 상태(기본 false)를 추가하고, `handleSendMessage`에서 요청 시작 시 `true`, `finally` 블록에서 `false`로 되돌리도록 구현했다. `ChatWindow`에 하드코딩돼 있던 `isLoading={false}`를 실제 상태로 교체했다. `ChatInput.jsx`는 3.3에서 이미 `isLoading` prop에 따라 버튼을 "응답 생성 중..."으로 표시하고 입력창/버튼을 비활성화하도록 구현돼 있어 추가 수정이 필요 없었다. `npm run lint`, `npm run build` 통과를 확인했다.
+- 확인 방법: 메시지를 전송한 직후 전송 버튼이 "응답 생성 중..."으로 바뀌고 입력창과 버튼이 비활성화되는지, 응답이 오면(성공/실패 무관) 다시 "전송"으로 돌아오고 재입력이 가능한지 확인한다.
+- 결정/이슈: 성공/실패 여부와 무관하게 로딩 해제가 보장되도록 `finally` 블록에서 `setIsLoading(false)`를 호출했다. 이슈 없음.
+
+## [5.3] /chat 실패 시 에러 메시지 표시 처리
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/App.jsx, frontend/src/components/ChatWindow.jsx
+- 한 일: App.jsx에 `error` 상태를 추가하고, `handleSendMessage` 시작 시 `null`로 초기화한 뒤 요청 실패 시 `chatApi.js`가 변환한 `error.message`(422 배열/500 문자열 공통 처리 결과)를 저장하도록 구현했다(방금 추가한 사용자 메시지는 그대로 유지, `catch` 변수명은 상위 스코프의 `error` state와 겹치지 않도록 `sendError`로 변경). `ChatWindow`는 `error` prop을 받아 값이 있을 때 `MessageList`와 `ChatInput` 사이에 `.chat-window__error` 문단으로 표시한다. `npm run lint`, `npm run build` 통과를 확인했다.
+- 확인 방법: 백엔드를 끄거나 `num_predict`를 범위를 벗어나게 만드는 등 `/chat`이 실패하는 상황을 만든 뒤 메시지를 전송하면, 방금 보낸 사용자 메시지는 목록에 남고 그 아래에 에러 문구가 표시되는지 확인한다. 이후 정상 전송을 하면 에러 문구가 사라지는지도 확인한다.
+- 결정/이슈: `error` state 변수명이 `catch (error)`의 지역 변수명과 충돌해 `catch (sendError)`로 이름을 바꿨다. 새 className(`chat-window__error`)은 이번 작업 범위(App.css 미포함)에 스타일을 추가하지 않고 5.5에서 정리하기로 함. 이슈 없음.
+
+## [5.4] 빈 상태 안내 문구 표시
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/components/MessageList.jsx
+- 한 일: `MessageList`에서 `messages` 배열이 비어 있으면 말풍선 목록 대신 "메시지를 입력해 대화를 시작하세요" 문구를 표시하도록 early return을 추가했다(`message-list--empty`/`message-list__empty-text` className 부여). `npm run lint`, `npm run build` 통과를 확인했다.
+- 확인 방법: 앱을 처음 열었을 때(메시지 없음) 또는 "대화 초기화" 버튼을 누른 뒤 채팅 영역에 안내 문구가 보이는지 확인한다.
+- 결정/이슈: 새 className은 이번 작업 범위(App.css 미포함)에 스타일을 추가하지 않고 5.5에서 정리하기로 함. 이슈 없음.
+
+## [5.5] App.css/index.css 전체 스타일 정리
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/App.css, frontend/src/index.css
+- 한 일: `index.css`에서 Vite 템플릿 잔재였던 미사용 CSS 변수(`--accent`, `--accent-bg`, `--accent-border`, `--social-bg`, `--shadow`, `--code-bg`, `--mono`)와 미사용 선택자(`code`, `.counter`, `#social .button-icon`, 다크모드 미디어 쿼리)를 제거하고, 앱 전역에서 재사용할 디자인 토큰(`--color-bg`, `--color-surface`, `--color-border`, `--color-text`, `--color-text-muted`, `--color-primary`, `--color-user-bubble-bg`/`--color-user-bubble-text`, `--color-assistant-bubble-bg`/`--color-assistant-bubble-text`, `--color-error-*`, `--color-disabled-bg`)으로 정리했다. `App.css`의 모든 하드코딩된 색상값을 이 변수로 교체하고, 5.1~5.4에서 클래스명만 추가해두고 스타일을 미루었던 `.settings-panel__status`(-`-error`), `.chat-window__error`, `.message-list--empty`/`.message-list__empty-text`에 스타일을 추가했다. 설계도의 사용자 말풍선이 진한 파랑이 아니라 옅은 하늘색 배경에 짙은 남색 텍스트인 것을 반영해 `--color-user-bubble-bg`(#dbeafe)/`--color-user-bubble-text`(#1e3a8a)로 조정했다. `npm run lint`, `npm run build` 통과를 확인했고, 5.1~5.5가 모두 끝나 상위 작업 5.0도 체크했다.
+- 확인 방법: `npm run dev`로 띄운 뒤 `chat_ui_설계도.jpg`와 나란히 비교해 사이드바/채팅 영역 배경색, 헤더 카드, 사용자·AI 말풍선 색, 슬라이더 accent 색이 유사한지 확인한다. 모델 로딩 실패(`.settings-panel__status--error`), `/chat` 실패(`.chat-window__error`), 빈 대화(`.message-list--empty`) 상태를 각각 재현해 스타일이 적용됐는지도 확인한다.
+- 결정/이슈: PRD 범위상 다크모드 요구사항이 없고 설계도도 단일(라이트) 테마만 제공하므로, 기존 Vite 템플릿의 `prefers-color-scheme: dark` 분기는 유지하지 않고 라이트 테마 값만 사용하도록 단순화했다. 클래스 구조(각 컴포넌트의 className)는 변경하지 않고 CSS 파일 두 개만 수정해 작업 범위를 지켰다. 이슈 없음.
+
+## 전체 완료 요약
+- frontend-task.md의 모든 상위 작업(1.0~5.0)과 하위 작업이 완료되어 전부 [x] 체크됨.
+- 1.0: vite.config.js proxy 설정, App.jsx 기본 템플릿 제거
+- 2.0: chatApi.js에 sendChatMessage/fetchModels 구현(422/500 공통 에러 파싱 포함)
+- 3.0: MessageBubble/MessageList/ChatInput/SettingsPanel/ChatWindow 정적 UI 구현 및 App.jsx 조립 + 레이아웃 보완(전체 너비/높이, 메시지 목록만 스크롤)
+- 4.0: App.jsx 상태 관리(messages/model/systemPrompt/temperature/topP/numPredict/modelOptions) 및 fetchModels/sendChatMessage 연동, 대화 초기화 연결
+- 5.0: 모델 목록 로딩/실패, 메시지 전송 로딩, `/chat` 실패 에러 표시, 빈 상태 안내, App.css/index.css 전체 스타일 정리
+- git 커밋: "feat: 4.0 상태 관리와 API 연결" 완료. "feat: 5.0 예외 처리 마무리 및 스타일 정리"는 이 요약 작성 직후 별도로 커밋 예정(사용자 지시에 따라 세션 한정으로 직접 커밋).
+
+## 사용자가 직접 확인할 항목
+1. `backend/`를 8000번 포트에서 실행한 뒤 `npm run dev`로 프론트를 띄워 골든 패스를 확인한다: 모델 목록이 드롭다운에 채워지는지 → 메시지 전송 시 사용자 말풍선이 먼저 뜨고 "응답 생성 중..." 후 AI 응답이 도착하는지 → "대화 초기화"로 목록이 비워지고 안내 문구가 뜨는지.
+2. 백엔드를 끈 상태에서 앱을 열어 모델 목록 로딩 실패 문구(`.settings-panel__status--error`)가 뜨는지 확인한다.
+3. 백엔드는 켜둔 채 `num_predict`를 2048 초과 등으로 설정해 422를 유도하거나, 다른 방식으로 `/chat`을 실패시켜 에러 문구(`.chat-window__error`)가 사용자 메시지 아래에 표시되는지, 방금 보낸 사용자 메시지가 목록에 남아 있는지 확인한다.
+4. 브라우저 창 크기를 줄이거나 메시지를 여러 개 보내 메시지 목록만 스크롤되고 페이지 전체는 스크롤되지 않는지 확인한다.
+5. `chat_ui_설계도.jpg`와 실제 화면을 나란히 비교해 색상/레이아웃이 의도한 대로 보이는지 최종 확인한다.
+6. 이번 세션에서 "규칙 변경(자동 진행/커밋)"이 세션 한정이었으므로, 다음 세션부터는 다시 하위 작업마다 멈추고 확인받는 기본 규칙으로 돌아간다는 점을 참고한다.

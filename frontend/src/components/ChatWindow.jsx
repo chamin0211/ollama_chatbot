@@ -1,7 +1,7 @@
 import MessageList from "./MessageList"
 import ChatInput from "./ChatInput"
 
-function ChatWindow({ messages, onSendMessage, onReset, isLoading }) {
+function ChatWindow({ messages, onSendMessage, onReset, isLoading, error }) {
   return (
     <div className="chat-window">
       <div className="chat-window__header">
@@ -15,6 +15,8 @@ function ChatWindow({ messages, onSendMessage, onReset, isLoading }) {
       </div>
 
       <MessageList messages={messages} />
+
+      {error && <p className="chat-window__error">{error}</p>}
 
       <ChatInput onSend={onSendMessage} isLoading={isLoading} />
     </div>
