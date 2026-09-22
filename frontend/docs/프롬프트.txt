@@ -5,6 +5,7 @@ frontend/
 │   ├── 프롬프트.txt
 │   ├── frontend-prd.md
 │   └── frontend-task.md
+│   └── frontend-progress.md
 ├── src/
 │   ├── api/
 │   │   └── chatApi.js        # API 호출 로직
@@ -124,6 +125,14 @@ frontend-prd.md를 읽고, 하나씩 구현 가능한 체크리스트를 fronten
 4. 구현이 끝나면:
    - frontend-task.md에서 해당 하위 작업을 [x]로 체크한다.
    - frontend/에서 npm run lint와 npm run build로 오류가 없는지 확인한다.
+   - frontend/docs/frontend-progress.md 맨 아래에 아래 형식으로 기록을 추가한다. 파일이 없으면 만든다.
+
+     ## [작업 번호] 작업 이름
+     - 날짜: YYYY-MM-DD
+     - 변경 파일: 파일 목록
+     - 한 일: 3줄 이내 요약
+     - 확인 방법: 사용자가 확인하는 방법
+     - 결정/이슈: 구현 중 내린 판단이나 발생한 문제 (없으면 "없음")
 5. 아래 형식으로 보고하고 멈춘다.
    1. 완료한 작업 번호와 이름
    2. 변경 파일 목록
