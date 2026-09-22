@@ -17,9 +17,9 @@
   - [x] 1.1 vite.config.js에 `/chat`, `/models` 경로를 `http://127.0.0.1:8000`으로 보내는 server.proxy 설정 추가 (수정 파일: vite.config.js)
   - [x] 1.2 App.jsx의 기존 Vite 기본 템플릿 코드(카운터, 로고, hero 섹션, 문서/소셜 링크)를 제거하고 빈 레이아웃으로 정리 (수정 파일: App.jsx, App.css)
 
-- [ ] 2.0 API 계층 구현
-  - [ ] 2.1 chatApi.js에 `sendChatMessage({ message, model, systemPrompt, temperature, topP, numPredict })` 함수 구현 — camelCase 인자를 snake_case JSON으로 변환해 `POST /chat` 호출, `{ model, message, elapsedTime }` 반환. 실패 시 422(배열 detail)와 500(문자열 detail)을 모두 사람이 읽을 수 있는 메시지로 변환해 `Error`로 throw하는 공통 에러 파싱 로직 포함 (수정 파일: src/api/chatApi.js)
-  - [ ] 2.2 chatApi.js에 `fetchModels()` 함수 구현 — `GET /models` 호출 후 `models` 배열 반환, 실패 시 2.1의 공통 에러 파싱 로직을 재사용해 `Error`로 throw (수정 파일: src/api/chatApi.js)
+- [x] 2.0 API 계층 구현
+  - [x] 2.1 chatApi.js에 `sendChatMessage({ message, model, systemPrompt, temperature, topP, numPredict })` 함수 구현 — camelCase 인자를 snake_case JSON으로 변환해 `POST /chat` 호출, `{ model, message, elapsedTime }` 반환. 실패 시 422(배열 detail)와 500(문자열 detail)을 모두 사람이 읽을 수 있는 메시지로 변환해 `Error`로 throw하는 공통 에러 파싱 로직 포함 (수정 파일: src/api/chatApi.js)
+  - [x] 2.2 chatApi.js에 `fetchModels()` 함수 구현 — `GET /models` 호출 후 `models` 배열 반환, 실패 시 2.1의 공통 에러 파싱 로직을 재사용해 `Error`로 throw (수정 파일: src/api/chatApi.js)
 
 - [ ] 3.0 정적 UI 구현 (목업 데이터, API 연결 없음)
   - [ ] 3.1 MessageBubble.jsx 구현 — `role`("user"|"assistant")에 따라 정렬/색상이 다른 말풍선 렌더링. 사용자: 오른쪽 정렬 + 파란색 계열, AI: 왼쪽 정렬 + 회색 계열 (수정 파일: src/components/MessageBubble.jsx, App.css)
