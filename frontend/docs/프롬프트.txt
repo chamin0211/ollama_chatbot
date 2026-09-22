@@ -1,0 +1,141 @@
+===== 공통: 파일 구조 (모든 단계에서 이 구조를 따른다) =====
+frontend/
+├── docs/
+│   ├── chat_ui_설계도.jpg
+│   ├── 프롬프트.txt
+│   ├── frontend-prd.md
+│   └── frontend-task.md
+├── src/
+│   ├── api/
+│   │   └── chatApi.js        # API 호출 로직
+│   ├── components/
+│   │   ├── ChatWindow.jsx    # 메인 채팅 윈도우
+│   │   ├── SettingsPanel.jsx # 모델 선택 패널
+│   │   ├── MessageList.jsx   # 메시지 목록
+│   │   ├── MessageBubble.jsx # 개별 메시지
+│   │   └── ChatInput.jsx     # 입력 필드
+│   ├── App.jsx               # 앱 진입점
+│   ├── main.jsx              # React 렌더링
+│   ├── App.css               # 앱 스타일
+│   └── index.css             # 전역 스타일
+├── index.html
+├── package.json
+├── vite.config.js
+└── eslint.config.js
+
+- 위 구조에 없는 파일이나 폴더는 만들지 않는다. 필요하면 먼저 제안하고 승인받는다.
+- 스타일은 App.css와 index.css로만 작성한다. CSS 프레임워크는 쓰지 않는다.
+- backend는 ../backend에 있으며 읽기만 한다.
+
+
+===== [1] create-prd =====
+# PRD 작성 규칙
+
+## 목표
+채팅 UI 프론트엔드에 대해, 개발자가 바로 구현할 수 있는 PRD를 작성한다.
+
+## 참고 자료
+- 화면 설계도: frontend/docs/chat_ui_설계도.jpg
+- 백엔드 코드: backend/main.py, backend/schema.py, backend/ollama_chat.py (읽기만, 수정 금지)
+- 공통 파일 구조
+
+## PRD 구성
+1. 개요: 무엇을, 왜 만드는지
+2. 목표: 측정 가능한 목표
+3. 사용자 시나리오: "사용자는 ~하기 위해 ~한다" 형식
+4. 화면 구조: 설계도의 영역을 공통 파일 구조의 컴포넌트 5개에 대응시킨 표와 컴포넌트 트리
+5. 컴포넌트 명세: 각 컴포넌트의 역할, props, 내부 상태, 사용자 동작
+6. API 명세: 엔드포인트, 메서드, 요청/응답 JSON 예시, 스트리밍 여부와 형식, 포트
+7. chatApi.js 함수 명세: 함수명, 인자, 반환값, 호출하는 엔드포인트
+8. 컴포넌트-API 매핑 표
+9. 기능 요구사항: 번호 붙인 목록
+10. 예외 처리: 로딩, 에러, 빈 상태
+11. 범위 밖: 백엔드 수정, 설계도에 없는 기능, 공통 구조에 없는 파일
+12. 확인 필요: 설계도나 코드에서 확실하지 않은 항목
+
+## 작성 원칙
+- 독자는 주니어 개발자다. 모호한 표현 대신 구체적으로 쓴다.
+- 확실하지 않은 내용은 추측하지 않고 "확인 필요"에 적는다.
+- frontend/docs/frontend-prd.md로 저장하고 멈춘다. 코드는 작성하지 않는다.
+
+
+===== [2] generate-tasks =====
+# 작업 목록 생성 규칙
+
+## 목표
+frontend-prd.md를 읽고, 하나씩 구현 가능한 체크리스트를 frontend/docs/frontend-task.md로 만든다.
+
+## 참고 자료
+- frontend/docs/frontend-prd.md
+- 공통 파일 구조
+- 현재 frontend/ 폴더 상태 (React + Vite + JavaScript, 이미 생성됨)
+
+## 절차
+1. frontend-prd.md와 현재 frontend/ 상태를 읽는다.
+2. 상위 작업(1.0, 2.0 ...)만 먼저 제시하고 멈춘다.
+   마지막에 "하위 작업을 생성하려면 'Go'라고 입력해 주세요"라고 말한다.
+3. 사용자가 "Go"라고 하면 하위 작업(1.1, 1.2 ...)까지 작성해서 frontend-task.md로 저장하고 멈춘다.
+
+## 작업 순서 원칙
+1. 기본 설정: vite.config.js의 proxy, 기존 Vite 기본 화면 코드 정리
+2. API 계층: chatApi.js
+3. 정적 UI (목업 데이터): MessageBubble → MessageList → ChatInput → SettingsPanel → ChatWindow → App 순서로, 작은 컴포넌트부터
+4. 상태 관리와 API 연결: 메시지 전송, 응답 표시, 모델 선택
+5. 마무리: 로딩/에러/빈 상태 처리, App.css와 index.css 스타일 정리
+
+## 하위 작업 크기
+- 하나의 하위 작업은 파일 1~3개 수정으로 끝나야 한다.
+- 각 하위 작업에 수정할 파일명을 적는다.
+- 각 하위 작업은 완료 여부를 확인할 수 있어야 한다.
+- 새 패키지가 필요한 작업은 작업명에 패키지명을 적는다.
+
+## frontend-task.md 형식
+### 관련 파일
+- src/api/chatApi.js : API 호출 로직
+
+### 작업 목록
+- [ ] 1.0 상위 작업명
+  - [ ] 1.1 하위 작업명 (수정 파일: vite.config.js)
+  - [ ] 1.2 하위 작업명 (수정 파일: App.jsx, App.css)
+- [ ] 2.0 상위 작업명
+  - [ ] 2.1 하위 작업명 (수정 파일: src/api/chatApi.js)
+
+## 금지
+- 코드는 작성하지 않는다. frontend-task.md만 만든다.
+- PRD에 없는 기능, 공통 구조에 없는 파일을 작업으로 추가하지 않는다.
+
+
+===== [3] process-task-list =====
+# 작업 처리 규칙
+
+## 핵심 원칙
+한 번에 하위 작업 하나만 구현한다. 끝나면 반드시 멈추고 사용자의 확인을 기다린다.
+사용자가 "다음", "yes", "y"라고 하기 전에는 다음 하위 작업을 시작하지 않는다.
+
+## 참고 자료
+- frontend/docs/frontend-task.md (작업 목록)
+- frontend/docs/frontend-prd.md (요구사항, 컴포넌트 명세, API 명세)
+- 공통 파일 구조
+
+## 절차
+1. frontend-task.md에서 체크되지 않은 첫 번째 하위 작업을 찾는다.
+2. 사용할 라이브러리의 문서를 Context7로 확인한 뒤 구현한다.
+3. 하위 작업에 적힌 수정 파일만 수정한다.
+4. 구현이 끝나면:
+   - frontend-task.md에서 해당 하위 작업을 [x]로 체크한다.
+   - frontend/에서 npm run lint와 npm run build로 오류가 없는지 확인한다.
+5. 아래 형식으로 보고하고 멈춘다.
+   1. 완료한 작업 번호와 이름
+   2. 변경 파일 목록
+   3. 한 일 요약 (3줄 이내)
+   4. 사용자가 확인하는 방법
+6. 상위 작업의 하위 작업이 모두 끝나면 상위 작업도 [x]로 체크하고,
+   "이 단계를 커밋할 차례입니다"라고 알린다.
+
+## 금지
+- 여러 하위 작업을 한 번에 처리하지 않는다.
+- 하위 작업에 적히지 않은 파일은 수정하지 않는다. 필요하면 먼저 묻는다.
+- 공통 구조에 없는 파일을 만들지 않는다.
+- 새 패키지는 패키지명과 이유를 말하고 승인받은 뒤에만 설치한다.
+- backend/ 폴더는 수정하지 않는다.
+- git commit, npm run dev는 실행하지 않는다.
