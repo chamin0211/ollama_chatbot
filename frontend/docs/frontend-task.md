@@ -21,13 +21,13 @@
   - [x] 2.1 chatApi.js에 `sendChatMessage({ message, model, systemPrompt, temperature, topP, numPredict })` 함수 구현 — camelCase 인자를 snake_case JSON으로 변환해 `POST /chat` 호출, `{ model, message, elapsedTime }` 반환. 실패 시 422(배열 detail)와 500(문자열 detail)을 모두 사람이 읽을 수 있는 메시지로 변환해 `Error`로 throw하는 공통 에러 파싱 로직 포함 (수정 파일: src/api/chatApi.js)
   - [x] 2.2 chatApi.js에 `fetchModels()` 함수 구현 — `GET /models` 호출 후 `models` 배열 반환, 실패 시 2.1의 공통 에러 파싱 로직을 재사용해 `Error`로 throw (수정 파일: src/api/chatApi.js)
 
-- [ ] 3.0 정적 UI 구현 (목업 데이터, API 연결 없음)
-  - [ ] 3.1 MessageBubble.jsx 구현 — `role`("user"|"assistant")에 따라 정렬/색상이 다른 말풍선 렌더링. 사용자: 오른쪽 정렬 + 파란색 계열, AI: 왼쪽 정렬 + 회색 계열 (수정 파일: src/components/MessageBubble.jsx, App.css)
-  - [ ] 3.2 MessageList.jsx 구현 — 목업 메시지 배열을 받아 MessageBubble 리스트 렌더링 (수정 파일: src/components/MessageList.jsx)
-  - [ ] 3.3 ChatInput.jsx 구현 — 입력창(placeholder: "메시지를 입력하세요") + 전송 버튼 정적 UI, `inputValue` 내부 상태만 연결 (API 호출 없음) (수정 파일: src/components/ChatInput.jsx, App.css)
-  - [ ] 3.4 SettingsPanel.jsx 구현 — 모델 드롭다운, 시스템 프롬프트, Temperature/Top P/Num Predict 슬라이더·입력 정적 UI (목업 옵션/기본값 사용) (수정 파일: src/components/SettingsPanel.jsx, App.css)
-  - [ ] 3.5 ChatWindow.jsx 구현 — 헤더("Local LLM Chat"/서브타이틀/"대화 초기화" 버튼) + MessageList + ChatInput 배치 (수정 파일: src/components/ChatWindow.jsx, App.css)
-  - [ ] 3.6 App.jsx에 SettingsPanel + ChatWindow를 좌우로 배치, 목업 데이터로 화면 전체 조립 (수정 파일: App.jsx, App.css)
+- [x] 3.0 정적 UI 구현 (목업 데이터, API 연결 없음)
+  - [x] 3.1 MessageBubble.jsx 구현 — `role`("user"|"assistant")에 따라 정렬/색상이 다른 말풍선 렌더링. 사용자: 오른쪽 정렬 + 파란색 계열, AI: 왼쪽 정렬 + 회색 계열 (수정 파일: src/components/MessageBubble.jsx, App.css)
+  - [x] 3.2 MessageList.jsx 구현 — 목업 메시지 배열을 받아 MessageBubble 리스트 렌더링 (수정 파일: src/components/MessageList.jsx)
+  - [x] 3.3 ChatInput.jsx 구현 — 입력창(placeholder: "메시지를 입력하세요") + 전송 버튼 정적 UI, `inputValue` 내부 상태만 연결 (API 호출 없음) (수정 파일: src/components/ChatInput.jsx, App.css)
+  - [x] 3.4 SettingsPanel.jsx 구현 — 모델 드롭다운, 시스템 프롬프트, Temperature/Top P/Num Predict 슬라이더·입력 정적 UI (목업 옵션/기본값 사용) (수정 파일: src/components/SettingsPanel.jsx, App.css)
+  - [x] 3.5 ChatWindow.jsx 구현 — 헤더("Local LLM Chat"/서브타이틀/"대화 초기화" 버튼) + MessageList + ChatInput 배치 (수정 파일: src/components/ChatWindow.jsx, App.css)
+  - [x] 3.6 App.jsx에 SettingsPanel + ChatWindow를 좌우로 배치, 목업 데이터로 화면 전체 조립 (수정 파일: App.jsx, App.css)
 
 - [ ] 4.0 상태 관리와 API 연결
   - [ ] 4.1 App.jsx에 `messages`, `model`, `systemPrompt`, `temperature`, `topP`, `numPredict`, `modelOptions` 상태 추가하고 마운트 시 `fetchModels` 호출 (수정 파일: App.jsx)
