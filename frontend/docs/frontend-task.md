@@ -29,11 +29,11 @@
   - [x] 3.5 ChatWindow.jsx 구현 — 헤더("Local LLM Chat"/서브타이틀/"대화 초기화" 버튼) + MessageList + ChatInput 배치 (수정 파일: src/components/ChatWindow.jsx, App.css)
   - [x] 3.6 App.jsx에 SettingsPanel + ChatWindow를 좌우로 배치, 목업 데이터로 화면 전체 조립 (수정 파일: App.jsx, App.css)
 
-- [ ] 4.0 상태 관리와 API 연결
-  - [ ] 4.1 App.jsx에 `messages`, `model`, `systemPrompt`, `temperature`, `topP`, `numPredict`, `modelOptions` 상태 추가하고 마운트 시 `fetchModels` 호출 (수정 파일: App.jsx)
-  - [ ] 4.2 SettingsPanel에 상태값과 `onChange` 핸들러를 props로 연결 (수정 파일: App.jsx, SettingsPanel.jsx)
-  - [ ] 4.3 ChatInput 전송 시 사용자 메시지를 `messages`에 추가하고 `sendChatMessage` 호출 → 응답 도착 시 AI 메시지 추가 (수정 파일: App.jsx, ChatInput.jsx)
-  - [ ] 4.4 ChatWindow의 "대화 초기화" 버튼 클릭 시 확인 모달 없이 즉시 `messages`를 빈 배열로 초기화하는 로직 연결 (수정 파일: App.jsx, ChatWindow.jsx)
+- [x] 4.0 상태 관리와 API 연결
+  - [x] 4.1 App.jsx에 `messages`, `model`, `systemPrompt`, `temperature`, `topP`, `numPredict`, `modelOptions` 상태 추가하고 마운트 시 `fetchModels` 호출 (수정 파일: App.jsx)
+  - [x] 4.2 SettingsPanel에 상태값과 `onChange` 핸들러를 props로 연결 (수정 파일: App.jsx, SettingsPanel.jsx)
+  - [x] 4.3 ChatInput 전송 시 사용자 메시지를 `messages`에 추가하고 `sendChatMessage` 호출 → 응답 도착 시 AI 메시지 추가 (수정 파일: App.jsx, ChatInput.jsx)
+  - [x] 4.4 ChatWindow의 "대화 초기화" 버튼 클릭 시 확인 모달 없이 즉시 `messages`를 빈 배열로 초기화하는 로직 연결 (수정 파일: App.jsx, ChatWindow.jsx)
 
 - [ ] 5.0 예외 처리 마무리 및 스타일 정리
   - [ ] 5.1 모델 목록 로딩/실패 상태 처리 — 로딩 중 드롭다운 비활성화, 실패 시 재시도 버튼 없이 에러 문구만 표시 (수정 파일: App.jsx, SettingsPanel.jsx)

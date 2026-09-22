@@ -67,3 +67,24 @@
 - 한 일: App.jsx에서 `SettingsPanel`(좌측)과 `ChatWindow`(우측)를 나란히 배치하고, PRD 기본값(모델 "exaone3.5:7.8b", 시스템 프롬프트 "너는 초보자를 돕는 친절한 AI 강사다.", temperature 0.6, topP 0.7, numPredict 256)과 `/models` 응답 예시 기반 목업 `modelOptions`, user/assistant 예시가 담긴 목업 `messages`로 화면 전체를 조립했다. 아직 상태 관리 전 단계라 모든 `onChange`/`onSend`/`onReset` 핸들러는 빈 함수로 연결했다. App.css에 `.app` 좌우 레이아웃 스타일을 추가했다. `npm run lint`, `npm run build` 통과(22개 모듈로 증가해 전 컴포넌트가 연결됐음을 확인)했고, 3.1~3.6이 모두 끝나 상위 작업 3.0도 체크했다.
 - 확인 방법: 사용자가 직접 `npm run dev`로 개발 서버를 띄운 뒤 브라우저에서 좌측 설정 패널 + 우측 채팅창 레이아웃과 목업 메시지 2건이 `chat_ui_설계도.jpg`와 유사하게 보이는지 확인한다(드롭다운/슬라이더 조작은 아직 반응하지 않는 것이 정상 — 4.0에서 연결 예정).
 - 결정/이슈: 3.6은 "정적 UI 조립" 단계라 App.jsx에 `useState`를 도입하지 않고 상수 목업 값과 no-op 핸들러만 사용했다(실제 상태 관리는 4.1~4.4). `index.css`는 이번 작업 범위 밖(수정 파일 목록에 없음)이라 건드리지 않았고, 기존 Vite 템플릿 잔재(`#root` 폭 1126px, `text-align: center` 등)는 5.5 스타일 정리 단계에서 정리하기로 함. 이슈 없음.
+
+## 3.6 보완: 레이아웃
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/index.css, frontend/src/App.css
+- 한 일: `index.css`의 Vite 기본 템플릿 잔재(`#root`의 `width: 1126px`, `max-width`, `margin: 0 auto`, `text-align: center`, `border-inline`)를 제거하고 `html, body { height: 100%; margin: 0; }` + `#root { width: 100%; height: 100vh; display: flex; flex-direction: column; }`으로 바꿔 화면 전체 너비/높이를 채우도록 했다. App.css는 기존에 이미 `.app`(flex:1, min-height:0), `.chat-window`(height:100%, flex column), `.message-list`(flex:1, overflow-y:auto), `.settings-panel`(overflow-y:auto) 구조가 갖춰져 있어 `#root`의 높이가 100vh로 고정되자 페이지 전체는 스크롤되지 않고 메시지 목록 영역만 내부 스크롤되도록 정상 동작함을 확인했다. `npm run lint`, `npm run build` 통과를 확인했다.
+- 확인 방법: 사용자가 `npm run dev`로 개발 서버를 띄운 뒤 브라우저 창을 키워 화면 양옆 흰 여백이 사라지고 좌측 설정 패널/우측 채팅 영역이 화면 하단까지 채워지는지 확인한다. 브라우저 창 높이를 줄이거나 메시지를 여러 개 추가해 보면(App.jsx 목업 데이터에 항목 추가) 페이지 전체가 아니라 메시지 목록 영역만 스크롤되는지 확인할 수 있다.
+- 결정/이슈: `App.css`의 레이아웃 구조(`.app`, `.chat-window`, `.message-list`의 flex/overflow 설정)는 3.5~3.6에서 이미 올바르게 작성돼 있었고, 문제의 근본 원인은 `index.css`의 `#root`가 `min-height: 100svh`(콘텐츠가 넘치면 뷰포트보다 커짐)와 고정 폭 `1126px`을 쓰고 있었던 것이었다. `min-height`를 `height: 100vh`로, 폭 제한을 제거하는 것으로 해결해 App.css는 구조 변경 없이 그대로 두었다(요청대로 두 파일 모두 손을 대긴 했으나 실질적 레이아웃 로직 변경은 index.css에 집중됨). PRD 범위상 모바일 반응형은 제외이므로 100vh 고정 방식을 그대로 사용함. 이슈 없음.
+
+## [4.1/4.2/4.4] App.jsx 상태 추가 + SettingsPanel/초기화 버튼 연결
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/App.jsx
+- 한 일: `messages`, `model`, `systemPrompt`, `temperature`, `topP`, `numPredict`, `modelOptions` 상태를 `useState`로 추가하고, 마운트 시 Context7로 확인한 React 최신 패턴(`useEffect` 내부 async 함수 + `ignore` 플래그로 경쟁 상태 방지)으로 `chatApi.fetchModels()`를 호출해 `modelOptions`를 채우도록 구현했다. `SettingsPanel`의 5개 `onChange` prop은 각각 대응하는 setter(`setModel` 등)에 직접 연결했고, `ChatWindow`의 `onReset`은 `() => setMessages([])`로 연결했다. `npm run lint`, `npm run build` 통과를 확인했다.
+- 확인 방법: `npm run dev`로 백엔드(8000번 포트)와 함께 띄운 뒤, 모델 드롭다운에 실제 Ollama 모델 목록이 채워지는지, 시스템 프롬프트/슬라이더/Num Predict를 조작하면 값이 실제로 바뀌는지, "대화 초기화" 버튼을 누르면 메시지 목록이 비워지는지 확인한다.
+- 결정/이슈: 원래 작업 목록은 4.1(상태 추가)·4.2(SettingsPanel 연결)·4.4(초기화 로직)를 별도 하위 작업으로 나눴지만, `useState`의 setter를 선언만 하고 실제로 참조하지 않으면 `no-unused-vars` ESLint 오류가 발생함을 확인했다(직접 테스트 스크립트로 검증). 각 하위 작업을 파일 수정 없이 "빈 커밋"으로 통과시키는 대신, 세 작업 모두 App.jsx 한 번의 수정으로 함께 반영하고 각각 체크 및 기록했다. `SettingsPanel.jsx`, `ChatWindow.jsx`는 이미 3.4/3.5에서 필요한 props를 전부 지원하도록 구현되어 있어 추가 수정이 필요 없었다. `sendChatMessage` 연동(4.3)과 로딩 상태(5.2)는 아직 이 커밋에 포함하지 않았다. `fetchModels` 실패 시 처리는 5.1에서 다룰 예정이라 지금은 `console.error`로만 남겨두었다. 이슈 없음.
+
+## [4.3] ChatInput 전송 → sendChatMessage 연동
+- 날짜: 2026-09-22
+- 변경 파일: frontend/src/App.jsx
+- 한 일: `App.jsx`에 `handleSendMessage(content)`를 추가해 사용자 메시지를 즉시 `messages`에 추가하고, 현재 `model`/`systemPrompt`/`temperature`/`topP`/`numPredict` 값으로 `chatApi.sendChatMessage`를 호출한 뒤 응답의 `message`를 AI 메시지로 `messages`에 추가하도록 구현했다. `ChatWindow`의 `onSendMessage`에 이 함수를 연결했다. `ChatInput.jsx`는 3.3에서 이미 `onSend(trimmed)`를 호출하도록 구현돼 있어 추가 수정이 필요 없었다. `npm run lint`, `npm run build` 통과를 확인했고, 4.1~4.4가 모두 끝나 상위 작업 4.0도 체크했다.
+- 확인 방법: 백엔드를 8000번 포트에서 실행한 뒤 `npm run dev`로 프론트를 띄우고 입력창에 메시지를 보내면, 사용자 메시지가 오른쪽 파란 말풍선으로 먼저 추가되고 잠시 뒤 왼쪽 회색 말풍선으로 AI 응답이 추가되는지 확인한다.
+- 결정/이슈: 요청 중복 방지/로딩 표시(`isLoading`)는 5.2에서, 실패 시 에러 메시지 표시는 5.3에서 다루기로 하고 이번 작업에서는 `catch` 블록에 `console.error`만 남겨 두었다. `/chat` 요청은 PRD 9.8 요구사항대로 대화 히스토리 없이 최신 사용자 메시지(`content`)만 전송한다. 이슈 없음.

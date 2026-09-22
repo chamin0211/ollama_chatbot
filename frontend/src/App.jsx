@@ -1,26 +1,57 @@
+import { useEffect, useState } from 'react'
 import './App.css'
 import SettingsPanel from './components/SettingsPanel'
 import ChatWindow from './components/ChatWindow'
-
-const MOCK_MODEL_OPTIONS = ["gemma3:4b", "exaone3.5:7.8b"]
-
-const MOCK_MESSAGES = [
-  {
-    role: "user",
-    content: "React와 FastAPI를 연결해서 로컬 LLM 채팅 앱을 만드는 과정을 3단계로 설명해줘.",
-  },
-  {
-    role: "assistant",
-    content: "1단계: FastAPI로 /chat 엔드포인트를 만든다...",
-  },
-]
+import { fetchModels, sendChatMessage } from './api/chatApi'
 
 function App() {
-  const model = "exaone3.5:7.8b"
-  const systemPrompt = "너는 초보자를 돕는 친절한 AI 강사다."
-  const temperature = 0.6
-  const topP = 0.7
-  const numPredict = 256
+  const [messages, setMessages] = useState([])
+  const [model, setModel] = useState("exaone3.5:7.8b")
+  const [systemPrompt, setSystemPrompt] = useState("너는 초보자를 돕는 친절한 AI 강사다.")
+  const [temperature, setTemperature] = useState(0.6)
+  const [topP, setTopP] = useState(0.7)
+  const [numPredict, setNumPredict] = useState(256)
+  const [modelOptions, setModelOptions] = useState([])
+
+  useEffect(() => {
+    let ignore = false
+
+    async function loadModels() {
+      try {
+        const models = await fetchModels()
+        if (!ignore) {
+          setModelOptions(models)
+        }
+      } catch (error) {
+        if (!ignore) {
+          console.error(error)
+        }
+      }
+    }
+
+    loadModels()
+    return () => {
+      ignore = true
+    }
+  }, [])
+
+  async function handleSendMessage(content) {
+    setMessages((prev) => [...prev, { role: "user", content }])
+
+    try {
+      const response = await sendChatMessage({
+        message: content,
+        model,
+        systemPrompt,
+        temperature,
+        topP,
+        numPredict,
+      })
+      setMessages((prev) => [...prev, { role: "assistant", content: response.message }])
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <div className="app">
@@ -30,17 +61,17 @@ function App() {
         temperature={temperature}
         topP={topP}
         numPredict={numPredict}
-        modelOptions={MOCK_MODEL_OPTIONS}
-        onModelChange={() => {}}
-        onSystemPromptChange={() => {}}
-        onTemperatureChange={() => {}}
-        onTopPChange={() => {}}
-        onNumPredictChange={() => {}}
+        modelOptions={modelOptions}
+        onModelChange={setModel}
+        onSystemPromptChange={setSystemPrompt}
+        onTemperatureChange={setTemperature}
+        onTopPChange={setTopP}
+        onNumPredictChange={setNumPredict}
       />
       <ChatWindow
-        messages={MOCK_MESSAGES}
-        onSendMessage={() => {}}
-        onReset={() => {}}
+        messages={messages}
+        onSendMessage={handleSendMessage}
+        onReset={() => setMessages([])}
         isLoading={false}
       />
     </div>
