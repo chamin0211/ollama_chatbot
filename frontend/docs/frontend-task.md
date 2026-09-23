@@ -41,3 +41,6 @@
   - [x] 5.3 `/chat` 실패 시 에러 메시지 표시 처리 — chatApi.js가 변환한 메시지(422/500 공통)를 동일한 방식으로 채팅 영역에 표시 (수정 파일: App.jsx, ChatWindow.jsx)
   - [x] 5.4 대화가 없을 때 "메시지를 입력해 대화를 시작하세요" 빈 상태 안내 문구 표시 (수정 파일: MessageList.jsx)
   - [x] 5.5 App.css/index.css 전체 스타일을 설계도 기준으로 정리 (수정 파일: App.css, index.css)
+
+- [x] 6.0 반응형 레이아웃
+  - [x] 6.1 App.css에 뷰포트 너비 768px 이하일 때 `.app`을 세로(column) 레이아웃으로 전환하고 `.app > .settings-panel`의 너비를 100%로 바꾸는 미디어 쿼리 추가 (수정 파일: App.css)
