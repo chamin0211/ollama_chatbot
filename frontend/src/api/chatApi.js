@@ -1,3 +1,17 @@
+async function fetchOrThrowConnectionError(url, options) {
+  try {
+    return await fetch(url, options);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(
+        "서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인해주세요.",
+        { cause: error }
+      );
+    }
+    throw error;
+  }
+}
+
 async function parseErrorResponse(response) {
   let detail;
   try {
@@ -24,7 +38,7 @@ export async function sendChatMessage({
   topP,
   numPredict,
 }) {
-  const response = await fetch("/chat", {
+  const response = await fetchOrThrowConnectionError("/chat", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -52,7 +66,7 @@ export async function sendChatMessage({
 }
 
 export async function fetchModels() {
-  const response = await fetch("/models");
+  const response = await fetchOrThrowConnectionError("/models");
 
   if (!response.ok) {
     throw await parseErrorResponse(response);
